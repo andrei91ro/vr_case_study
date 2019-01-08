@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <!--<script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>-->
+        <script src="js/aframe.min.js"></script>
+        <script src="js/aframe-extras.min.js"></script>
+        <script src="js/aframe-gui.min.js"></script>
+
+        <script>
+            var product=""
+            var links=[]
+            links["camera"] = []
+            links["camera"]["buy"] = "https://imaging.nikon.com/lineup/dslr/d5300/"
+            links["camera"]["specs"] = "https://imaging.nikon.com/lineup/dslr/d5300/spec.htm"
+            links["tv"] = []
+            links["tv"]["buy"] = "https://www.lg.com/uk/tvs/lg-OLED65E8PLA"
+            links["tv"]["specs"] = "https://www.lg.com/uk/tvs/lg-OLED65E8PLA"
+
+            function testButtonAction(id) {
+                window.open(links[product][id],"_blank")
+            }
+            function testProductAction(id) {
+                title = document.getElementById("product_title")
+                title.setAttribute('text', 'value', id)
+                product=id
+            }
+        </script>
+        <script>
+            AFRAME.registerComponent('clickable-product', {
+                schema: {
+                    id: {type: 'string', default: ''}
+                },
+
+                init: function () {
+                    var data = this.data;
+                    this.el.addEventListener('click', function () {
+                        //this.setAttribute('scale', data.to);
+                        testProductAction(data.id)
+                    });
+                }
+            });
+        </script>
+
+    </head>
+    <body>
+        <a-scene>
+            <a-entity id="rig" movement-controls >
+                <a-entity camera
+                          position="0 1.6 0"
+                          look-controls="pointerLockEnabled: true">
+
+                    <a-gui-cursor id="cursor"
+                                  raycaster="objects: [gui-interactable]"
+                                  fuse="true" fuse-timeout="2000"
+                                              design="dot"
+                                              >
+                    </a-gui-cursor> <!-- /cursor -->
+
+                </a-entity>
+            </a-entity>
+
+            <!--speed optimization versus simply referring to the image using src="" in the a-box -->
+            <a-assets>
+                <img id="grid" src="images/wood2.jpg">
+                <a-asset-item id="table" src="models/table.gltf"></a-asset-item>
+                <a-asset-item id="lcd" src="models/lcd.gltf"></a-asset-item>
+                <a-asset-item id="camera" src="models/camera.gltf"></a-asset-item>
+            </a-assets>
+
+            <a-plane src="#grid" rotation="-90 0 0" width="30" height="30"  repeat="5 5"></a-plane>
+
+
+            <a-sky color="#ABA"></a-sky>
+
+            <a-entity id="table" gltf-model="#table" position="0 1 -1" scale="0.1 0.1 0.1"/>
+                <a-entity id="lcd" gltf-model="#lcd" position="0 0 0" rotation="0 90 0" gui-interactable clickable-product="id: tv"/></a-entity>
+                <a-entity id="camera" gltf-model="#camera" position="0 0 0" gui-interactable clickable-product="id: camera" /></a-entity>
+            </a-entity>
+
+            <a-light type="ambient" color="#445451"></a-light>
+            <a-light type="point" intensity="1" position="-15 9.79 0"></a-light>
+            <a-entity
+                id="product_title"
+                geometry="primitive: plane; width: 0.8; height: auto;"
+                material="color: #ccc"
+                position="0 2.4 -2.39"
+                text="wrap-count: 10; align: center; value: Product name"></a-entity>
+        <a-gui-flex-container
+            flex-direction="column" justify-content="center" align-items="normal" component-padding="0.1"
+            opacity="0.7" width="1" height="2.5"
+            position="0 1.6 -2.4" rotation="0 0 0" style="display: hidden" >
+
+            <a-gui-button
+                width="0.8" height="0.35"
+                onclick="testButtonAction('buy')"
+                value="Buy"
+                font-family="Arial"
+                font-size=25px
+                margin="0 0 0.05 0"
+            >
+            </a-gui-button>
+
+            <a-gui-button
+                width="0.8" height="0.35"
+                onclick="testButtonAction('specs')"
+                value="Specs"
+                font-family="Arial"
+                font-size=25px
+                margin="0 0 0.05 0"
+            >
+            </a-gui-button>
+
+
+        </a-gui-flex-container>
+
+
+        </a-scene>
+
+    </body>
+</html>
